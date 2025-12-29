@@ -31,6 +31,10 @@ Parameters
 | `weekday_code` | Comma separated list of weekday codes to use (default `Su,M,T,W,R,F,Sa`). Elements can be blank if no weekday code is wanted. | [...?weekday_code=S,M,T,W,T,F,S](https://abetusk.github.io/neatocal?weekday_code=S,M,T,W,T,F,S) |
 | `month_code` | Comma separated list of month codes to use (default `Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec`). Elements can be blank if no month code is wanted. | [...?month_code=J,F,M,A,M,J,J,A,S,O,N,D](https://abetusk.github.io/neatocal?month_code=J,F,M,A,M,J,J,A,S,O,N,D) |
 | `cell_height` | CSS parameter to alter cell height. | [...?cell_height=1.5em](https://abetusk.github.io/neatocal?cell_height=1.5em) |
+| `show_moon_phase` | Display moon phases on calendar (default `false`). | [...?show_moon_phase=true](https://abetusk.github.io/neatocal?show_moon_phase=true) |
+| `moon_phase_style` | Moon phase display style: `css` (default), `symbol`, or `name`. | [...?show_moon_phase=true&moon_phase_style=symbol](https://abetusk.github.io/neatocal?show_moon_phase=true&moon_phase_style=symbol) |
+| `moon_phase_position` | Position of moon phase: `below` (default) or `inline`. | [...?show_moon_phase=true&moon_phase_position=inline](https://abetusk.github.io/neatocal?show_moon_phase=true&moon_phase_position=inline) |
+| `moon_phase_display` | When to show moon phases: `changes` (default, only on phase transitions) or `all` (every day). | [...?show_moon_phase=true&moon_phase_display=all](https://abetusk.github.io/neatocal?show_moon_phase=true&moon_phase_display=all) |
 | `data` | Location of JSON data file. | [...?data=example/data.json](https://abetusk.github.io/neatocal?data=example/data.json) |
 | `help` | Show help screen  | [...?help](https://abetusk.github.io/neatocal?help) |
 
@@ -49,6 +53,9 @@ The above parameter list is versatile enough to provide many options for display
 | [German month and day](https://abetusk.github.io/neatocal/?weekday_code=S,M,D,M,D,F,S&month_code=Jan,Feb,M%C3%A4r,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez) | Calendar with German month and day abbreviations (thanks to [moontear](https://news.ycombinator.com/user?id=moontear)) |
 | [Turkish month and day](https://abetusk.github.io/neatocal/?year=2026&month_code=Oca,%C5%9Eub,Mar,N%C4%B0s,May,Haz,Tem,A%C4%9Fu,Eyl,Ek%C4%B0,Kas,Ara&weekday_code=Pz,Pt,S,%C3%87,Pe,Cu,Ct) | Calendar with Turkish month and day abbreviations |
 | [Two year calendar](https://abetusk.github.io/neatocal?n_month=24&layout=aligned-weekdays&start_day=0) | Two year single page calendar |
+| [Moon phase calendar](https://abetusk.github.io/neatocal?show_moon_phase=true&layout=aligned-weekdays&cell_height=2.5em) | Calendar with SVG moon phases (shows only phase changes) |
+| [Moon phase symbols](https://abetusk.github.io/neatocal?show_moon_phase=true&moon_phase_style=symbol&layout=aligned-weekdays) | Calendar with Unicode moon phase symbols |
+| [Moon phase every day](https://abetusk.github.io/neatocal?show_moon_phase=true&moon_phase_display=all&layout=aligned-weekdays&cell_height=2.5em) | Calendar showing moon phase on every day |
 
 Data File
 ---
@@ -96,6 +103,9 @@ If a parameter is specified in the data file, they will override any parameters 
 
 `color_cell` allows for individual cell highlighting ([example](https://abetusk.github.io/neatocal?data=example/sched.json)).
 See [example/sched.json](example/sched.json) for the example data file with the `color_cell` array.
+
+Moon phase parameters (`show_moon_phase`, `moon_phase_style`, `moon_phase_position`, `moon_phase_display`) can also be set in the `param` section
+([moon phase example](https://abetusk.github.io/neatocal?data=example/moon_phase.json)).
 
 If the file is not present or isn't able to be parsed, the render will continue as the data file isn't present.
 

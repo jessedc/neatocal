@@ -59,7 +59,7 @@ var NEATOCAL_PARAM = {
   "start_day": 1,
 
   // calendar format
-  // 
+  //
   //   default
   //   aligned-weekdays
   //
@@ -79,7 +79,7 @@ var NEATOCAL_PARAM = {
   //
   "month_code": [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ],
 
-  // 
+  //
   "language" : "",
 
   // start month (0 indexed)
@@ -94,7 +94,14 @@ var NEATOCAL_PARAM = {
 
   // weekend highlight color
   //
-  "highlight_color": '#eee'
+  "highlight_color": '#eee',
+
+  // Moon phase display options
+  //
+  "show_moon_phase": false,
+  "moon_phase_style": "css",  // "css", "symbol", "name"
+  "moon_phase_position": "below",  // "below", "inline"
+  "moon_phase_display": "changes"  // "all", "changes"
 
 };
 
@@ -117,6 +124,135 @@ var H = {
     return s;
   }
 };
+
+// Moon phase calculation functions
+// Reference: Known new moon on Jan 6, 2000, 18:14 UTC (Julian Day 2451550.26)
+//
+function calculateLunarAge(year, month, day) {
+  // Calculate days since reference new moon (Jan 6, 2000)
+  let refDate = new Date(Date.UTC(2000, 0, 6, 18, 14, 0));
+  let targetDate = new Date(Date.UTC(year, month, day, 0, 0, 0));
+
+  let daysSince = (targetDate - refDate) / (1000 * 60 * 60 * 24);
+
+  // Lunar synodic period (new moon to new moon)
+  let lunarCycle = 29.53058867;
+
+  // Calculate lunar age (days since last new moon)
+  let lunarAge = daysSince % lunarCycle;
+  if (lunarAge < 0) lunarAge += lunarCycle;
+
+  return lunarAge;
+}
+
+function getMoonPhase(lunarAge) {
+  // Returns phase index 0-7
+  // 0: New Moon, 1: Waxing Crescent, 2: First Quarter, 3: Waxing Gibbous
+  // 4: Full Moon, 5: Waning Gibbous, 6: Last Quarter, 7: Waning Crescent
+  let phase = Math.round((lunarAge / 29.53058867) * 8) % 8;
+  return phase;
+}
+
+function getMoonIllumination(lunarAge) {
+  // Returns illumination percentage 0-100
+  let cycle = 29.53058867;
+  let percent = ((1 - Math.cos((lunarAge / cycle) * 2 * Math.PI)) / 2) * 100;
+  return Math.round(percent);
+}
+
+function getMoonPhaseName(phase) {
+  const names = [
+    "New", "Wax Cres", "First Qtr", "Wax Gibb",
+    "Full", "Wan Gibb", "Last Qtr", "Wan Cres"
+  ];
+  return names[phase];
+}
+
+function getMoonPhaseSymbol(phase) {
+  const symbols = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
+  return symbols[phase];
+}
+
+// Counter for unique mask IDs
+var MOON_PHASE_COUNTER = 0;
+
+function createMoonPhaseCSS(phase, lunarAge) {
+  // Create an inline SVG moon phase visualization with unique mask IDs
+  let span = H.span("", "moon-phase");
+  let uid = ++MOON_PHASE_COUNTER;
+
+  // SVG moon phase definitions using masks for curved terminators
+  const svgs = [
+    // 0: New Moon
+    "<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><circle cx='32' cy='32' r='30' fill='#404040'/></svg>",
+
+    // 1: Waxing Crescent
+    `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><defs><mask id='m1-${uid}'><circle cx='32' cy='32' r='30' fill='white'/><circle cx='22' cy='32' r='30' fill='black'/></mask></defs><circle cx='32' cy='32' r='30' fill='#404040'/><circle cx='32' cy='32' r='30' fill='#d0d0d0' mask='url(#m1-${uid})'/></svg>`,
+
+    // 2: First Quarter
+    `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><defs><mask id='m2-${uid}'><rect x='32' y='0' width='32' height='64' fill='white'/></mask></defs><circle cx='32' cy='32' r='30' fill='#404040'/><circle cx='32' cy='32' r='30' fill='#d0d0d0' mask='url(#m2-${uid})'/></svg>`,
+
+    // 3: Waxing Gibbous
+    `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><defs><mask id='m3-${uid}'><circle cx='32' cy='32' r='30' fill='white'/><circle cx='42' cy='32' r='30' fill='black'/></mask></defs><circle cx='32' cy='32' r='30' fill='#d0d0d0'/><circle cx='32' cy='32' r='30' fill='#404040' mask='url(#m3-${uid})'/></svg>`,
+
+    // 4: Full Moon
+    "<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><circle cx='32' cy='32' r='30' fill='#d0d0d0'/></svg>",
+
+    // 5: Waning Gibbous
+    `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><defs><mask id='m5-${uid}'><circle cx='32' cy='32' r='30' fill='white'/><circle cx='22' cy='32' r='30' fill='black'/></mask></defs><circle cx='32' cy='32' r='30' fill='#d0d0d0'/><circle cx='32' cy='32' r='30' fill='#404040' mask='url(#m5-${uid})'/></svg>`,
+
+    // 6: Last Quarter (Third Quarter)
+    `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><defs><mask id='m6-${uid}'><rect x='0' y='0' width='32' height='64' fill='white'/></mask></defs><circle cx='32' cy='32' r='30' fill='#404040'/><circle cx='32' cy='32' r='30' fill='#d0d0d0' mask='url(#m6-${uid})'/></svg>`,
+
+    // 7: Waning Crescent
+    `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><defs><mask id='m7-${uid}'><circle cx='32' cy='32' r='30' fill='white'/><circle cx='42' cy='32' r='30' fill='black'/></mask></defs><circle cx='32' cy='32' r='30' fill='#404040'/><circle cx='32' cy='32' r='30' fill='#d0d0d0' mask='url(#m7-${uid})'/></svg>`
+  ];
+
+  span.innerHTML = svgs[phase];
+  return span;
+}
+
+function renderMoonPhase(td, year, month, day) {
+  if (!NEATOCAL_PARAM.show_moon_phase) return;
+
+  let lunarAge = calculateLunarAge(year, month, day);
+  let phase = getMoonPhase(lunarAge);
+
+  // If only showing phase changes, check if phase is different from previous day
+  if (NEATOCAL_PARAM.moon_phase_display === "changes") {
+    // Calculate previous day
+    let prevDate = new Date(year, month, day - 1);
+    let prevLunarAge = calculateLunarAge(prevDate.getFullYear(), prevDate.getMonth(), prevDate.getDate());
+    let prevPhase = getMoonPhase(prevLunarAge);
+
+    // Skip if phase hasn't changed
+    if (phase === prevPhase) return;
+  }
+
+  let moonElement;
+
+  if (NEATOCAL_PARAM.moon_phase_style === "symbol") {
+    moonElement = H.span(getMoonPhaseSymbol(phase), "moon-symbol");
+  } else if (NEATOCAL_PARAM.moon_phase_style === "name") {
+    moonElement = H.span(getMoonPhaseName(phase), "moon-name");
+  } else {
+    // Default to CSS
+    moonElement = createMoonPhaseCSS(phase, lunarAge);
+  }
+
+  if (NEATOCAL_PARAM.moon_phase_position === "inline") {
+    // Add inline after a space
+    moonElement.classList.add("moon-inline");
+    td.appendChild(H.text(" "));
+    td.appendChild(moonElement);
+  } else {
+    // Add below in its own container
+    let moonContainer = H.div();
+    moonContainer.classList.add("moon-container");
+    moonContainer.appendChild(moonElement);
+    td.appendChild(moonContainer);
+  }
+}
 
 function localized_day(locale, day_idx) {
   let iday = 17 + day_idx;
@@ -321,6 +457,9 @@ function neatocal_default() {
           td.appendChild(txt);
         }
 
+        // Add moon phase if enabled
+        renderMoonPhase(td, cur_year, cur_mo, idx+1);
+
       }
       tr.appendChild(td);
 
@@ -441,6 +580,9 @@ function neatocal_aligned_weekdays() {
           td.appendChild(txt);
         }
 
+        // Add moon phase if enabled
+        renderMoonPhase(td, cur_year, cur_mo, day_idx+1);
+
       }
       tr.appendChild(td);
 
@@ -491,7 +633,8 @@ function neatocal_override_param(param, data) {
   let admissible_param = [
     "year", "start_month", "n_month", "layout",
     "start_day", "highlight_color", "weekday_code", "month_code",
-    "cell_height", "language", "help"
+    "cell_height", "help", "show_moon_phase", "moon_phase_style",
+    "moon_phase_position", "moon_phase_display", "language"
   ];
 
   for (let idx = 0; idx < admissible_param.length; idx++) {
@@ -562,6 +705,12 @@ function neatocal_init() {
   let language_param = sp.get("language");
 
   let datafn_param = sp.get("data");
+
+  // Moon phase parameters
+  let show_moon_phase_param = sp.get("show_moon_phase");
+  let moon_phase_style_param = sp.get("moon_phase_style");
+  let moon_phase_position_param = sp.get("moon_phase_position");
+  let moon_phase_display_param = sp.get("moon_phase_display");
 
   //---
 
@@ -713,6 +862,54 @@ function neatocal_init() {
 
   //---
 
+  // Moon phase parameters
+  //
+  let show_moon_phase = NEATOCAL_PARAM.show_moon_phase;
+  if ((show_moon_phase_param != null) &&
+      (typeof show_moon_phase_param !== "undefined")) {
+    show_moon_phase = (show_moon_phase_param === "true" || show_moon_phase_param === "1");
+  }
+  NEATOCAL_PARAM.show_moon_phase = show_moon_phase;
+
+  //---
+
+  let moon_phase_style = NEATOCAL_PARAM.moon_phase_style;
+  if ((moon_phase_style_param != null) &&
+      (typeof moon_phase_style_param !== "undefined")) {
+    if (moon_phase_style_param === "css" ||
+        moon_phase_style_param === "symbol" ||
+        moon_phase_style_param === "name") {
+      moon_phase_style = moon_phase_style_param;
+    }
+  }
+  NEATOCAL_PARAM.moon_phase_style = moon_phase_style;
+
+  //---
+
+  let moon_phase_position = NEATOCAL_PARAM.moon_phase_position;
+  if ((moon_phase_position_param != null) &&
+      (typeof moon_phase_position_param !== "undefined")) {
+    if (moon_phase_position_param === "below" ||
+        moon_phase_position_param === "inline") {
+      moon_phase_position = moon_phase_position_param;
+    }
+  }
+  NEATOCAL_PARAM.moon_phase_position = moon_phase_position;
+
+  //---
+
+  let moon_phase_display = NEATOCAL_PARAM.moon_phase_display;
+  if ((moon_phase_display_param != null) &&
+      (typeof moon_phase_display_param !== "undefined")) {
+    if (moon_phase_display_param === "all" ||
+        moon_phase_display_param === "changes") {
+      moon_phase_display = moon_phase_display_param;
+    }
+  }
+  NEATOCAL_PARAM.moon_phase_display = moon_phase_display;
+
+  //---
+
   // if we have a data file, short circuit to wait till load.
   // neatocal_parse_data will call neatocal_render to render the
   // calendar.
@@ -784,4 +981,3 @@ function neatocal_render() {
 
   neatocal_post_process();
 }
-
