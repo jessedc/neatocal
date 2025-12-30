@@ -12,11 +12,11 @@ Here's a [live demo](https://abetusk.github.io/neatocal).
 Screenshots
 ---
 
-![default](img/neatocal_default.png)
+[![default](img/neatocal_default.png)](https://abetusk.github.io/neatocal)
 
-![aligned](img/neatocal_align.png)
+[![aligned](img/neatocal_align.png)](https://abetusk.github.io/neatocal?layout=aligned-weekdays)
 
-![hallon almnackan](img/neatocal_ha.png)
+[![hallon almanackan](img/neatocal_ha.png)](https://abetusk.github.io/neatocal?layout=hallon-almanackan)
 
 Parameters
 ---
@@ -26,7 +26,7 @@ Parameters
 | `year` | Change year (default to current year) | [...?year=2030](https://abetusk.github.io/neatocal?year=2030) |
 | `start_month` | Start at month other than January. 0 indexed (`0`=Jan, `1`=Feb, ...).  | [...?start_month=7](https://abetusk.github.io/neatocal?start_month=7) |
 | `n_month` | Change number of months to something other than 12 (default `12`).  | [...?n_month=6](https://abetusk.github.io/neatocal?n_month=6) |
-| `layout` | Changes the layout of the calendar. `default`, `aligned-weekdays` or `hallon-almnackan`.  | [...?layout=aligned-weekdays](https://abetusk.github.io/neatocal?layout=aligned-weekdays)  [...?layout=hallon-almnackan](https://abetusk.github.io/neatocal?layout=hallon-almanackan) |
+| `layout` | Changes the layout of the calendar. `default`, `aligned-weekdays` or `hallon-almanackan`.  | [...?layout=aligned-weekdays](https://abetusk.github.io/neatocal?layout=aligned-weekdays)  [...?layout=hallon-almanackan](https://abetusk.github.io/neatocal?layout=hallon-almanackan) |
 | `start_day` | Start at day other than Monday. 0 indexed (`0`=Sun, `1`=Mon, ...). Only valid with `aligned-weekdays` layout  | [...?layout=aligned-weekdays&start_day=0](https://abetusk.github.io/neatocal?layout=aligned-weekdays&start_day=0) |
 | `highlight_color` | Change the weekend highlight color (default `eee`) | [...?highlight_color=fee](https://abetusk.github.io/neatocal?highlight_color=fee) |
 | `language` | Change the language for month and day codes. Values will be overridden if `month_code` or `language_code` is specified. | [...?language=ko-KR](https://abetusk.github.io/neatocal?language=ko-KR) |
