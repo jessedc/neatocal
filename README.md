@@ -50,6 +50,7 @@ The following prefix and suffixes are available:
 
 | Variable |
 |---|
+| `year` |
 | `month` |
 | `weekday` |
 | `weekend` |

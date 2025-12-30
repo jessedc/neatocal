@@ -102,6 +102,11 @@ var NEATOCAL_PARAM = {
 
   // fiddly parameters
   //
+  "year_font_size": undefined,
+  "year_font_weight": undefined,
+  "year_foreground_color": undefined,
+  "year_background_color": undefined,
+
   "month_font_size": undefined,
   "month_font_weight": undefined,
   "month_foreground_color": undefined,
@@ -172,7 +177,7 @@ var H = {
 // value specified.
 //
 function ele_styles(ele, _type) {
-  let valid_type = ["weekend", "weekday", "date", "month", "week", "weekend_date"];
+  let valid_type = ["weekend", "weekday", "date", "month", "week", "weekend_date", "year"];
   let sfx_param = [ "_font_size", "_font_weight", "_foreground_color", "_background_color"];
   let class_key = ["fontSize", "fontWeight", "color", "background"];
 
@@ -200,6 +205,7 @@ function week_styles(week_ele) { ele_styles(week_ele, "week"); }
 function date_styles(date_ele) { ele_styles(date_ele, "date"); }
 function weekend_date_styles(weekend_date_ele) { ele_styles(weekend_date_ele, "weekend_date"); }
 function month_styles(month_ele) { ele_styles(month_ele, "month"); }
+function year_styles(year_ele) { ele_styles(year_ele, "year"); }
 
 
 
@@ -857,6 +863,11 @@ function neatocal_override_param(param, data) {
     "cell_height",
     "highlight_color",
 
+    "year_font_size",
+    "year_font_weight",
+    "year_foreground_color",
+    "year_background_color",
+
     "month_font_size",
     "month_font_weight",
     "month_foreground_color",
@@ -966,7 +977,7 @@ function neatocal_init() {
 
   // fiddly stylings
   //
-  let _ele_pfx = [ "month", "weekday", "weekend", "week", "date", "weekend_date" ];
+  let _ele_pfx = [ "year", "month", "weekday", "weekend", "week", "date", "weekend_date" ];
   let _ele_sfx = [ "font_size", "font_weight", "foreground_color", "background_color" ];
   for (let i_p=0; i_p<_ele_pfx.length; i_p++) {
     for (let i_s=0; i_s<_ele_sfx.length; i_s++) {
@@ -1244,6 +1255,8 @@ function neatocal_render() {
     span.style["justify-content"] = "center";
     span.style["text-align"] = "center";
     span.style["margin"] = "0 0 .5em 0";
+
+    year_styles(span);
 
     ui_year.appendChild( span );
   }
