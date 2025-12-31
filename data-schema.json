@@ -1,0 +1,281 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/abetusk/neatocal/data-schema.json",
+  "title": "NeatoCal Data File Schema",
+  "description": "Schema for NeatoCal JSON data files that provide parameters and calendar event data",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "description": "JSON Schema reference",
+      "type": "string"
+    },
+    "param": {
+      "description": "Configuration parameters that override URL parameters",
+      "type": "object",
+      "properties": {
+        "help": {
+          "description": "Show help screen",
+          "type": "boolean"
+        },
+        "year": {
+          "description": "Calendar year to display",
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 9999
+        },
+        "layout": {
+          "description": "Calendar layout style",
+          "type": "string",
+          "enum": ["default", "aligned-weekdays", "hallon-almanackan"]
+        },
+        "start_day": {
+          "description": "Starting day of week (0=Sun, 1=Mon, ..., 6=Sat). Only valid with aligned-weekdays layout",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "start_month": {
+          "description": "Starting month (0=Jan, 1=Feb, ..., 11=Dec)",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "n_month": {
+          "description": "Number of months to display",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24
+        },
+        "weekday_code": {
+          "description": "Array of weekday abbreviations (7 elements: Sun, Mon, ..., Sat)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "month_code": {
+          "description": "Array of month abbreviations (12 elements: Jan, Feb, ..., Dec)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 12,
+          "maxItems": 12
+        },
+        "weekend_days": {
+          "description": "Array of weekend day numbers (0=Sun, 1=Mon, ..., 6=Sat)",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "uniqueItems": true
+        },
+        "language": {
+          "description": "Language code for automatic localization (e.g., 'en-US', 'de-DE', 'ko-KR')",
+          "type": "string"
+        },
+        "show_moon_phase": {
+          "description": "Display moon phases on calendar",
+          "type": "boolean"
+        },
+        "moon_phase_style": {
+          "description": "Moon phase display style",
+          "type": "string",
+          "enum": ["css", "symbol", "name"]
+        },
+        "moon_phase_position": {
+          "description": "Position of moon phase display",
+          "type": "string",
+          "enum": ["below", "inline"]
+        },
+        "moon_phase_display": {
+          "description": "When to show moon phases",
+          "type": "string",
+          "enum": ["changes", "all"]
+        },
+        "show_week_numbers": {
+          "description": "Display ISO week numbers",
+          "type": "boolean"
+        },
+        "cell_height": {
+          "description": "CSS height value for calendar cells (e.g., '2em', '30px')",
+          "type": "string"
+        },
+        "highlight_color": {
+          "description": "Background color for weekend cells (CSS color value)",
+          "type": "string"
+        },
+        "today_highlight_color": {
+          "description": "Background color for today's date cell (CSS color value). Empty string disables highlighting.",
+          "type": "string"
+        },
+        "year_font_size": {
+          "description": "CSS font-size for year display",
+          "type": "string"
+        },
+        "year_font_weight": {
+          "description": "CSS font-weight for year display",
+          "type": "string"
+        },
+        "year_foreground_color": {
+          "description": "CSS color for year text",
+          "type": "string"
+        },
+        "year_background_color": {
+          "description": "CSS background-color for year display",
+          "type": "string"
+        },
+        "month_font_size": {
+          "description": "CSS font-size for month headers",
+          "type": "string"
+        },
+        "month_font_weight": {
+          "description": "CSS font-weight for month headers",
+          "type": "string"
+        },
+        "month_foreground_color": {
+          "description": "CSS color for month header text",
+          "type": "string"
+        },
+        "month_background_color": {
+          "description": "CSS background-color for month headers",
+          "type": "string"
+        },
+        "weekday_font_size": {
+          "description": "CSS font-size for weekday text",
+          "type": "string"
+        },
+        "weekday_font_weight": {
+          "description": "CSS font-weight for weekday text",
+          "type": "string"
+        },
+        "weekday_foreground_color": {
+          "description": "CSS color for weekday text",
+          "type": "string"
+        },
+        "weekday_background_color": {
+          "description": "CSS background-color for weekday text",
+          "type": "string"
+        },
+        "weekend_font_size": {
+          "description": "CSS font-size for weekend text",
+          "type": "string"
+        },
+        "weekend_font_weight": {
+          "description": "CSS font-weight for weekend text",
+          "type": "string"
+        },
+        "weekend_foreground_color": {
+          "description": "CSS color for weekend text",
+          "type": "string"
+        },
+        "weekend_background_color": {
+          "description": "CSS background-color for weekend text",
+          "type": "string"
+        },
+        "week_font_size": {
+          "description": "CSS font-size for week numbers",
+          "type": "string"
+        },
+        "week_font_weight": {
+          "description": "CSS font-weight for week numbers",
+          "type": "string"
+        },
+        "week_foreground_color": {
+          "description": "CSS color for week numbers",
+          "type": "string"
+        },
+        "week_background_color": {
+          "description": "CSS background-color for week numbers",
+          "type": "string"
+        },
+        "date_font_size": {
+          "description": "CSS font-size for date numbers",
+          "type": "string"
+        },
+        "date_font_weight": {
+          "description": "CSS font-weight for date numbers",
+          "type": "string"
+        },
+        "date_foreground_color": {
+          "description": "CSS color for date numbers",
+          "type": "string"
+        },
+        "date_background_color": {
+          "description": "CSS background-color for date numbers",
+          "type": "string"
+        },
+        "weekend_date_font_size": {
+          "description": "CSS font-size for weekend date numbers",
+          "type": "string"
+        },
+        "weekend_date_font_weight": {
+          "description": "CSS font-weight for weekend date numbers",
+          "type": "string"
+        },
+        "weekend_date_foreground_color": {
+          "description": "CSS color for weekend date numbers",
+          "type": "string"
+        },
+        "weekend_date_background_color": {
+          "description": "CSS background-color for weekend date numbers",
+          "type": "string"
+        },
+        "color_cell": {
+          "description": "Array of individual cell color overrides",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "description": "Date in YYYY-MM-DD format",
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "color": {
+                "description": "CSS color value for the cell background",
+                "type": "string"
+              }
+            },
+            "required": ["date", "color"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^\\d{4}-\\d{2}-\\d{2}$": {
+      "description": "Event text for specific dates in YYYY-MM-DD format",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "param": {
+        "year": 2030,
+        "layout": "aligned-weekdays",
+        "cell_height": "2em",
+        "today_highlight_color": "#ffeb3b",
+        "color_cell": [
+          {"date": "2030-01-01", "color": "#ffdddd"}
+        ]
+      },
+      "2030-01-01": "New Year's Day",
+      "2030-12-25": "Christmas Day"
+    },
+    {
+      "param": {
+        "year": 2025,
+        "show_moon_phase": true,
+        "moon_phase_style": "symbol"
+      }
+    }
+  ]
+}
