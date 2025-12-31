@@ -112,6 +112,10 @@ var NEATOCAL_PARAM = {
   //
   "highlight_color": '#eee',
 
+  // today's date highlight color
+  //
+  "today_highlight_color": '',
+
   // Moon phase display options
   //
   "show_moon_phase": false,
@@ -836,6 +840,16 @@ function neatocal_post_process() {
     x[i].style.background = highlight_color;
   }
 
+  // Highlight today's date
+  if (NEATOCAL_PARAM.today_highlight_color) {
+    let today = new Date();
+    let today_str = fmt_date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+    let today_ele = document.getElementById("ui_" + today_str);
+    if (today_ele) {
+      today_ele.style.background = NEATOCAL_PARAM.today_highlight_color;
+    }
+  }
+
   if ("color_cell" in NEATOCAL_PARAM) {
     let color_cell = NEATOCAL_PARAM.color_cell;
 
@@ -892,6 +906,7 @@ function neatocal_override_param(param, data) {
 
     "cell_height",
     "highlight_color",
+    "today_highlight_color",
 
     "year_font_size",
     "year_font_weight",
@@ -992,6 +1007,7 @@ function neatocal_init() {
   let n_month_param = sp.get("n_month");
   let start_day_param = sp.get("start_day");
   let highlight_color_param = sp.get("highlight_color");
+  let today_highlight_color_param = sp.get("today_highlight_color");
   let cell_height_param = sp.get("cell_height");
   let weekday_code_param = sp.get("weekday_code");
   let weekday_format_param = sp.get("weekday_format");
@@ -1119,6 +1135,18 @@ function neatocal_init() {
     }
   }
   NEATOCAL_PARAM.highlight_color = highlight_color;
+
+  //---
+
+  let today_highlight_color = NEATOCAL_PARAM.today_highlight_color;
+  if ((today_highlight_color_param != null) &&
+      (typeof today_highlight_color_param !== "undefined")) {
+    today_highlight_color = today_highlight_color_param;
+    if (today_highlight_color.match( /^[\da-fA-F]+/ )) {
+      today_highlight_color = "#" + today_highlight_color;
+    }
+  }
+  NEATOCAL_PARAM.today_highlight_color = today_highlight_color;
 
   //---
 
