@@ -82,6 +82,12 @@ td:empty {
   color: #888;
 }
 
+.text-content {
+  display: inline-block;
+  font-size: 0.8em;
+  color: #555;
+}
+
 .weekend {
   /* background: #d8d8d8; */
   background: #eee;
