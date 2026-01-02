@@ -101,6 +101,29 @@
           "description": "Display ISO week numbers",
           "type": "boolean"
         },
+        "show_links": {
+          "description": "Display navigation links row above months",
+          "type": "boolean"
+        },
+        "links": {
+          "description": "Array of navigation links to display above months",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "description": "Link text to display",
+                "type": "string"
+              },
+              "url": {
+                "description": "URL or relative path for the link",
+                "type": "string"
+              }
+            },
+            "required": ["text", "url"],
+            "additionalProperties": false
+          }
+        },
         "cell_height": {
           "description": "CSS height value for calendar cells (e.g., '2em', '30px')",
           "type": "string"
@@ -276,6 +299,21 @@
         "show_moon_phase": true,
         "moon_phase_style": "symbol"
       }
+    },
+    {
+      "param": {
+        "year": 2026,
+        "n_month": 6,
+        "show_links": true,
+        "links": [
+          {"text": "2025", "url": "?year=2025"},
+          {"text": "2026", "url": "?year=2026"},
+          {"text": "Full Year", "url": "?n_month=12"},
+          {"text": "6 Months", "url": "?n_month=6"}
+        ]
+      },
+      "2026-01-01": "New Year's Day",
+      "2026-07-04": "Independence Day"
     }
   ]
 }

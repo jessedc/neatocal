@@ -127,6 +127,11 @@ var NEATOCAL_PARAM = {
   //
   "show_week_numbers": false,
 
+  // navigation links
+  //
+  "show_links": false,
+  "links": [],
+
   // fiddly parameters
   //
   "year_font_size": undefined,
@@ -234,6 +239,37 @@ function weekend_date_styles(weekend_date_ele) { ele_styles(weekend_date_ele, "w
 function month_styles(month_ele) { ele_styles(month_ele, "month"); }
 function year_styles(year_ele) { ele_styles(year_ele, "year"); }
 
+// Render the links row above months
+//
+function renderLinksRow() {
+  if (!NEATOCAL_PARAM.show_links || NEATOCAL_PARAM.links.length === 0) {
+    let ui_tr_links = document.getElementById("ui_tr_links");
+    ui_tr_links.style.display = "none";
+    return;
+  }
+
+  let start_mo = NEATOCAL_PARAM.start_month;
+  let n_mo = NEATOCAL_PARAM.n_month;
+  
+  let ui_tr_links = document.getElementById("ui_tr_links");
+  ui_tr_links.style.display = "";
+  ui_tr_links.innerHTML = "";
+  
+  for (let i = 0; i < n_mo; i++) {
+    let th_link = H.th();
+    
+    if (i < NEATOCAL_PARAM.links.length) {
+      let link = NEATOCAL_PARAM.links[i];
+      let a = document.createElement("a");
+      a.href = link.url;
+      a.textContent = link.text;
+      a.classList.add("nav-link");
+      th_link.appendChild(a);
+    }
+    
+    ui_tr_links.appendChild(th_link);
+  }
+}
 
 
 // Moon phase calculation functions
@@ -422,6 +458,8 @@ function neatocal_hallon_almanackan() {
   let start_mo  = NEATOCAL_PARAM.start_month;
   let n_mo      = NEATOCAL_PARAM.n_month;
 
+  renderLinksRow();
+
   let ui_tr_mo = document.getElementById("ui_tr_month_name");
   ui_tr_mo.innerHTML = "";
   for (let i_mo = start_mo; i_mo < (start_mo+n_mo); i_mo++) {
@@ -561,6 +599,8 @@ function neatocal_default() {
   let start_mo  = NEATOCAL_PARAM.start_month;
   let n_mo      = NEATOCAL_PARAM.n_month;
 
+  renderLinksRow();
+
   let ui_tr_mo = document.getElementById("ui_tr_month_name");
   ui_tr_mo.innerHTML = "";
   for (let i_mo = start_mo; i_mo < (start_mo+n_mo); i_mo++) {
@@ -696,6 +736,8 @@ function neatocal_aligned_weekdays() {
   let year      = parseInt(NEATOCAL_PARAM.year);
   let start_mo  = parseInt(NEATOCAL_PARAM.start_month);
   let n_mo      = parseInt(NEATOCAL_PARAM.n_month);
+
+  renderLinksRow();
 
   let ui_tr_mo = document.getElementById("ui_tr_month_name");
   ui_tr_mo.innerHTML = "";
@@ -900,6 +942,9 @@ function neatocal_override_param(param, data) {
     "moon_phase_position",
     "moon_phase_display",
 
+    "show_links",
+    "links",
+
     "cell_height",
     "highlight_color",
     "today_highlight_color",
@@ -1013,6 +1058,11 @@ function neatocal_init() {
   let show_week_numbers_param = sp.get("show_week_numbers");
 
   let weekend_days_param = sp.get("weekend_days");
+
+  // Links parameters
+  //
+  let show_links_param = sp.get("show_links");
+  let links_param = sp.get("links");
 
   // Moon phase parameters
   //
@@ -1234,6 +1284,26 @@ function neatocal_init() {
   if ((show_week_numbers_param != null) &&
       (typeof show_week_numbers_param !== "undefined")) {
     NEATOCAL_PARAM.show_week_numbers = (show_week_numbers_param === "true");
+  }
+
+  //---
+
+  // Links parameters
+  //
+  if ((show_links_param != null) &&
+      (typeof show_links_param !== "undefined")) {
+    NEATOCAL_PARAM.show_links = (show_links_param === "true");
+  }
+
+  if ((links_param != null) &&
+      (typeof links_param !== "undefined")) {
+    try {
+      NEATOCAL_PARAM.links = JSON.parse(decodeURIComponent(links_param));
+      NEATOCAL_PARAM.show_links = true; // Auto-enable if links are provided
+    } catch (e) {
+      console.log("error parsing links parameter:", e);
+      NEATOCAL_PARAM.links = [];
+    }
   }
 
   //---
