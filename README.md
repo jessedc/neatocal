@@ -141,6 +141,66 @@ Moon phase parameters (`show_moon_phase`, `moon_phase_style`, `moon_phase_positi
 
 If the file is not present or isn't able to be parsed, the render will continue as the data file isn't present.
 
+Tools
+---
+
+NeatoCal includes command-line tools to help manage calendar data files programmatically.
+
+### calendar-data
+
+A Node.js utility for managing calendar data entries and cell colors from the command line.
+
+**Installation:**
+```bash
+# Make the tool executable (if needed)
+chmod +x tools/calendar-data
+
+# Or run directly with node
+node tools/calendar-data [arguments]
+```
+
+**Usage:**
+```bash
+tools/calendar-data <data-file> <date> [text] [color]
+```
+
+**Parameters:**
+- `data-file` - Path to the JSON data file (will be created if it doesn't exist)
+- `date` - Date in YYYY-MM-DD format
+- `text` - Optional text to display in the date cell
+- `color` - Optional background color for the cell (CSS color format)
+
+**Examples:**
+
+Add text and color to a date:
+```bash
+tools/calendar-data data.json 2024-12-25 "Christmas Day" "#ff0000"
+```
+
+Add only text to a date:
+```bash
+tools/calendar-data data.json 2024-01-01 "New Year's Day"
+```
+
+Add only color to a date:
+```bash
+tools/calendar-data data.json 2024-07-04 "" "#ff4444"
+```
+
+Remove text and color from a date:
+```bash
+tools/calendar-data data.json 2024-12-25
+```
+
+**Features:**
+- Creates data file if it doesn't exist
+- Preserves existing data and formatting
+- Validates date format (YYYY-MM-DD)
+- Automatically manages `color_cell` array structure
+- Removes empty entries to keep files clean
+
+**Output:**
+The tool updates the JSON data file and provides confirmation of changes made.
 
 Misc
 ---

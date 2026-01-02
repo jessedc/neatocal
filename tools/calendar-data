@@ -1,0 +1,118 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+
+function printUsage() {
+  console.log(`
+Usage: calendar-data <data-file> <date> [text] [color]
+
+  data-file   Path to the data.json file
+  date        Date in YYYY-MM-DD format
+  text        Optional text to place in the date cell
+  color       Optional background color for the cell (e.g., #ff0000)
+
+Examples:
+  calendar-data data.json 2024-12-25 "Christmas Day" "#ff0000"
+  calendar-data data.json 2024-12-25 "Christmas Day"
+  calendar-data data.json 2024-12-25 "" "#ff0000"
+  calendar-data data.json 2024-12-25                  # Remove text and color
+`);
+}
+
+function validateDate(dateString) {
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(dateString)) {
+    return false;
+  }
+  
+  const date = new Date(dateString + 'T00:00:00');
+  return date.toISOString().split('T')[0] === dateString;
+}
+
+function loadDataFile(filePath) {
+  try {
+    if (!fs.existsSync(filePath)) {
+      return { param: {} };
+    }
+    const content = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(content);
+  } catch (error) {
+    console.error(`Error reading data file: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+function saveDataFile(filePath, data) {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n');
+  } catch (error) {
+    console.error(`Error writing data file: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+function updateColorCell(data, date, color) {
+  if (!data.param) {
+    data.param = {};
+  }
+  
+  if (!data.param.color_cell) {
+    data.param.color_cell = [];
+  }
+  
+  // Remove existing entry for this date
+  data.param.color_cell = data.param.color_cell.filter(item => item.date !== date);
+  
+  // Add new entry if color is provided
+  if (color) {
+    data.param.color_cell.push({ date: date, color: color });
+  }
+  
+  // Remove color_cell array if empty
+  if (data.param.color_cell.length === 0) {
+    delete data.param.color_cell;
+  }
+}
+
+function main() {
+  const args = process.argv.slice(2);
+  
+  if (args.length < 2 || args[0] === '--help' || args[0] === '-h') {
+    printUsage();
+    process.exit(0);
+  }
+  
+  const [dataFile, date, text = '', color = ''] = args;
+  
+  // Validate date format
+  if (!validateDate(date)) {
+    console.error(`Error: Invalid date format. Use YYYY-MM-DD format.`);
+    process.exit(1);
+  }
+  
+  // Load existing data
+  const data = loadDataFile(dataFile);
+  
+  // Update text
+  if (text) {
+    data[date] = text;
+  } else if (date in data) {
+    delete data[date];
+  }
+  
+  // Update color
+  updateColorCell(data, date, color);
+  
+  // Save updated data
+  saveDataFile(dataFile, data);
+  
+  console.log(`Updated ${dataFile} for date ${date}`);
+  if (text) console.log(`  Text: "${text}"`);
+  if (color) console.log(`  Color: ${color}`);
+  if (!text && !color) console.log(`  Removed text and color`);
+}
+
+if (require.main === module) {
+  main();
+}
